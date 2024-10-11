@@ -385,3 +385,18 @@ Her masters, have I the devilish my other;
 If I had been a word all his grace huth not a as tears,
 A smooth as very
 ```
+
+##Finetuning
+```sh
+python train.py config/finetune_shakespeare.py
+```
+
+**Result: (Killed) during the fine-tuning process**
+--indicates that the system ran out of resources, particularly memory (RAM or GPU memory).
+
+Hypothesis:
+- Large Model: The fine-tune using the gpt2-xl model, which is a very large version of GPT-2 with 1.5 billion parameters. 
+This model requires a significant amount of GPU memory (VRAM) and system memory (RAM). 
+Fine-tuning such a large model can easily consume more resources.
+- Tokens per Iteration: The log mentions that the model is processing 32,768 tokens per iteration. 
+This is a large number of tokens, which increases the memory requirements even further, as each token has to be processed through the model’s multiple layers.
