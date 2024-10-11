@@ -1,5 +1,5 @@
 
-# GPT Training Script - Explanation
+# NanoGPT  
 
 This repository contains two main files: `train.py` and `model.py`, which together implement and train a GPT model using PyTorch. The script supports both single-GPU and Distributed Data Parallel (DDP) training for multi-GPU setups.
 
@@ -205,7 +205,7 @@ for iter_num in range(max_iters):
     scaler.scale(loss).backward()
 ```
 
-**1. Training Loop Initialization**
+**A. Training Loop Initialization**
 ```sh
 for iter_num in range(max_iters):
 ```
@@ -216,7 +216,7 @@ It defines how long the training process will last.
 The loop iterates over `max_iters`, which means the training continues until the specified number of iterations is completed.
 
 
-**2. Batch Loading**
+**B. Batch Loading**
 ```sh
 X, Y = get_batch('train')
 ```
@@ -226,7 +226,7 @@ X, Y = get_batch('train')
 - `'train'`: Indicates that the batch is being drawn from the training dataset. 
 
  
-**3. Mixed Precision Training Context**
+**C. Mixed Precision Training Context**
 ```sh
 with ctx:
 ```
@@ -234,7 +234,7 @@ with ctx:
 This is a common technique to speed up training and reduce memory usage, especially when training on GPUs.
 
 
-**4. Forward Pass (Model Inference)**
+**D. Forward Pass (Model Inference)**
 ```sh
 logits, loss = model(X, Y):
 ```
@@ -246,7 +246,7 @@ logits, loss = model(X, Y):
   `loss`: This is the calculated loss for the current batch, which measures how far off the model's predictions (logits) are from the actual target values (Y).
 
 
-**5. Loss Scaling for Gradient Accumulation**
+**E. Loss Scaling for Gradient Accumulation**
 ```sh
 loss = loss / gradient_accumulation_steps
 ```
@@ -256,7 +256,7 @@ loss = loss / gradient_accumulation_steps
    `gradient_accumulation_steps` to ensure that when the gradients are accumulated over multiple batches, the overall scale of the gradients remains correct. This avoids artificially inflating the gradients due to multiple backward passes before an update.
 
 
-**6. Backward Pass (Backpropagation)**
+**F. Backward Pass (Backpropagation)**
 ```sh
 scaler.scale(loss).backward()
 ```
@@ -273,7 +273,7 @@ Here is the breakdown of what happens in this training loop:
 - **Backward Pass**: The scaled loss is backpropagated through the model to compute gradients for each parameter, which will eventually be used to update the model parameters.
 
 ## 10. Gradient Clipping and Optimization
-**1. Gradient Clipping**
+**A. Gradient Clipping**
 Gradient clipping is a technique used to prevent the issue of exploding gradients during the backpropagation process. 
 **Exploding gradients** can occur when the gradients become excessively large, causing the model parameters to update too drastically and destabilize the training process.
 Clipping the gradients ensures that they are capped at a certain threshold, thus keeping the model's updates more stable.
@@ -293,7 +293,7 @@ Large gradients can cause very large parameter updates, which may lead to instab
 **With Gradient Clipping:**
 The gradients are capped at a specific norm, keeping the updates more controlled and stable.
 
-**2. Optimizer Step with Mixed-Precision (Automatic Mixed Precision - AMP)**
+**B. Optimizer Step with Mixed-Precision (Automatic Mixed Precision - AMP)**
 This line performs the **optimizer step**, which updates the model's parameters based on the gradients that were computed during the backward pass. In this case, the update is scaled using **Automatic Mixed Precision (AMP)**, which enables faster training by using half-precision where appropriate.
 
 ```sh
@@ -304,7 +304,7 @@ scaler.step(optimizer)
 - The optimizer (such as Adam or SGD) uses these gradients to adjust the model's parameters, which minimizes the loss and improves the model’s performance over time.
 - **Mixed precision** allows for faster training by using half-precision (FP16) for some operations and full precision (FP32) for others. This saves memory and increases throughput on GPUs.
 
-**3. Updating the Scaler (For Mixed Precision)**
+**C. Updating the Scaler (For Mixed Precision)**
 After each optimizer step, the scaler is updated to adjust the scaling factor used for the next iteration in mixed-precision training.
 
 ```sh
@@ -328,7 +328,7 @@ To conclude:
 
 ## 11. Logging
 Logs are printed after a set number of iterations to track the loss of the *training loop*:
-**1. Logging Interval**
+**A. Logging Interval**
 ```sh
 if iter_num % log_interval == 0:
 ```
@@ -338,7 +338,7 @@ if iter_num % log_interval == 0:
 For example, if log_interval = 100, then the script logs information every 100 iterations.
 This line checks whether the current iteration number `(iter_num)` is a multiple of `log_interval`. If true, the logging process will be triggered. The goal here is to avoid logging every single iteration, which would produce too much output. Instead, logging happens after a set number of iterations to provide periodic updates on the training progress.
 
-**2. Extracting the Loss Value**
+**B. Extracting the Loss Value**
 ```sh
     lossf = loss.item() * gradient_accumulation_steps
     print(f"iter {iter_num}: loss {lossf:.4f}")
