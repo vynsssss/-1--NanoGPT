@@ -358,3 +358,30 @@ At the end of training, the process group is destroyed if distributed training w
 if ddp:
     destroy_process_group()
 ```
+
+
+## Results sample:
+```sh
+ANGELO:
+And coward to live the sister of our hand,
+Say you take her brother unquit to be determine,
+And so you fall, which makes her to him.
+
+ESCALUS:
+I long to it, as I come at Harry lost.
+
+ESCALUS:
+Why, why, son I lind to her husband him.
+
+DUKE VINCENTIO:
+How now! no more?
+
+DUKE VINCENTIO:
+Not a letter; on him evils of him doubt,
+To help you of him that be dead.
+
+DUKE VINCENTIO:
+Her masters, have I the devilish my other;
+If I had been a word all his grace huth not a as tears,
+A smooth as very
+```
