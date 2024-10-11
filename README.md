@@ -274,14 +274,14 @@ Here is the breakdown of what happens in this training loop:
 
 ## 10. Gradient Clipping and Optimization
 #**A. Gradient Clipping**
-Gradient clipping is a technique used to prevent the issue of exploding gradients during the backpropagation process. 
-**Exploding gradients** can occur when the gradients become excessively large, causing the model parameters to update too drastically and destabilize the training process.
-Clipping the gradients ensures that they are capped at a certain threshold, thus keeping the model's updates more stable.
-
 ```sh
 if grad_clip != 0.0:
     torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
 ```
+
+Gradient clipping is a technique used to prevent the issue of exploding gradients during the backpropagation process. 
+**Exploding gradients** can occur when the gradients become excessively large, causing the model parameters to update too drastically and destabilize the training process.
+Clipping the gradients ensures that they are capped at a certain threshold, thus keeping the model's updates more stable.
 - `grad_clip`: This is a threshold value, and if it's set to `0.0`, gradient clipping is disabled. Otherwise, gradients will be clipped if they exceed this value.
 - `torch.nn.utils.clip_grad_norm_()`: This function clips the gradients of the model’s parameters to ensure their norm (magnitude) does not exceed the specified threshold `(grad_clip)`.
 - `model.parameters()`: Refers to the set of all parameters in the model that require gradients. These are the parameters for which the gradients were computed during backpropagation.
@@ -294,13 +294,12 @@ Large gradients can cause very large parameter updates, which may lead to instab
 The gradients are capped at a specific norm, keeping the updates more controlled and stable.
 
 #**B. Optimizer Step with Mixed-Precision (Automatic Mixed Precision - AMP)**
-This line performs the **optimizer step**, which updates the model's parameters based on the gradients that were computed during the backward pass. In this case, the update is scaled using **Automatic Mixed Precision (AMP)**, which enables faster training by using half-precision where appropriate.
-
 ```sh
 scaler.step(optimizer)
 ```
 
-`scaler.step(optimizer)`: This is part of PyTorch's **mixed-precision training mechanism**. After the gradients have been scaled (using `scaler.scale()` during backpropagation), the `scaler.step()` function unscales the gradients and applies them to the optimizer.
+This line performs the **optimizer step**, which updates the model's parameters based on the gradients that were computed during the backward pass. In this case, the update is scaled using **Automatic Mixed Precision (AMP)**, which enables faster training by using half-precision where appropriate.
+- `scaler.step(optimizer)`: This is part of PyTorch's **mixed-precision training mechanism**. After the gradients have been scaled (using `scaler.scale()` during backpropagation), the `scaler.step()` function unscales the gradients and applies them to the optimizer.
 - The optimizer (such as Adam or SGD) uses these gradients to adjust the model's parameters, which minimizes the loss and improves the model’s performance over time.
 - **Mixed precision** allows for faster training by using half-precision (FP16) for some operations and full precision (FP32) for others. This saves memory and increases throughput on GPUs.
 
@@ -328,6 +327,7 @@ To conclude:
 
 ## 11. Logging
 Logs are printed after a set number of iterations to track the loss of the *training loop*:
+
 #**A. Logging Interval**
 ```sh
 if iter_num % log_interval == 0:
@@ -337,6 +337,7 @@ if iter_num % log_interval == 0:
 - `log_interval`: This is a predefined configuration parameter that specifies how often the script should log information. 
 For example, if log_interval = 100, then the script logs information every 100 iterations.
 This line checks whether the current iteration number `(iter_num)` is a multiple of `log_interval`. If true, the logging process will be triggered. The goal here is to avoid logging every single iteration, which would produce too much output. Instead, logging happens after a set number of iterations to provide periodic updates on the training progress.
+
 
 #**B. Extracting the Loss Value**
 ```sh
