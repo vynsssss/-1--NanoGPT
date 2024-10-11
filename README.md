@@ -386,7 +386,7 @@ If I had been a word all his grace huth not a as tears,
 A smooth as very
 ```
 
-##Finetuning
+## Finetuning:
 ```sh
 python train.py config/finetune_shakespeare.py
 ```
