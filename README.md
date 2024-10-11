@@ -23,7 +23,7 @@ Dependencies:
 The fastest way to get started is to train a character-level GPT on the works of Shakespeare. 
 First, we download it as a single (1MB) file and turn it from raw text into one large stream of integers:
 ```sh
-sh data/shakespeare_char/prepare.py
+Python data/shakespeare_char/prepare.py
 ```
 
 This creates a `train.bin` and `val.bin` in that data directory. 
@@ -34,7 +34,7 @@ The size of it very much depends on the computational resources of your system:
 **I have a GPU**. We can quickly train a baby GPT with the settings provided in the [config/train_shakespeare_char.py](config/train_shakespeare_char.py) config file:
 
 ```sh
-sh train.py config/train_shakespeare_char.py
+Python train.py config/train_shakespeare_char.py
 ```
 
 Inside it, you'll see that we're training a GPT with a context size of up to 256 characters, 384 feature channels, and it is a 6-layer Transformer with 6 heads in each layer. 
@@ -42,7 +42,7 @@ On one A100 GPU this training run takes about 3 minutes and the best validation 
 Based on the configuration, the model checkpoints are being written into the `--out_dir` directory `out-shakespeare-char`. So once the training finishes we can sample from the best model by pointing the sampling script at this directory:
 
 ```sh
-sh sample.py --out_dir=out-shakespeare-char
+Python sample.py --out_dir=out-shakespeare-char
 ```
 
 **I only no GPU** (or only regular computer/laptop). 
@@ -51,7 +51,7 @@ Get PyTorch nightly ([select it here](https://pytorch.org/get-started/locally/) 
 But even without it, a simple train run could look as follows:
 
 ```sh
-sh train.py config/train_shakespeare_char.py --device=cpu --compile=False --eval_iters=20 --log_interval=1 --block_size=64 --batch_size=12 --n_layer=4 --n_head=4 --n_embd=128 --max_iters=2000 --lr_decay_iters=2000 --dropout=0.0
+Python train.py config/train_shakespeare_char.py --device=cpu --compile=False --eval_iters=20 --log_interval=1 --block_size=64 --batch_size=12 --n_layer=4 --n_head=4 --n_embd=128 --max_iters=2000 --lr_decay_iters=2000 --dropout=0.0
 ```
 
 Here, since we are running on CPU instead of GPU we must set both `--device=cpu` and also turn off PyTorch 2.0 compile with `--compile=False`. 
@@ -61,7 +61,7 @@ Because our network is so small we also ease down on regularization (`--dropout=
 This still runs in about ~3 minutes, but gets a little bit more loss and therefore also worse samples, but it's still good fun:
 
 ```sh
-sh sample.py --out_dir=out-shakespeare-char --device=cpu
+Python sample.py --out_dir=out-shakespeare-char --device=cpu
 ```
 
 ## 2. Key Imports
