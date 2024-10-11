@@ -1,10 +1,11 @@
 
 # NanoGPT  
 
-This repository contains two main files: `train.py` and `model.py`, which together implement and train a GPT model using PyTorch. The script supports both single-GPU and Distributed Data Parallel (DDP) training for multi-GPU setups.
+This repository contains three main files: `train.py`, `model.py`, and `configurator.py`, which together implement and train a GPT model using PyTorch. The script supports both single-GPU and Distributed Data Parallel (DDP) training for multi-GPU setups.
 
 ## Files Overview
 - **`train.py`**: This file is responsible for managing the training loop, model evaluation, and distributed training setup.
+- **`configurator.py`**: The file is a custom configuration utility that allows overriding global variables in the main script (like `train.py`) using external configuration files or command-line arguments. The idea behind this is to simplify configuration management without relying on complex configuration files or having to pass configurations via namespaces or objects.
 - **`model.py`**: Defines the architecture and configuration of the GPT model, including self-attention layers, feed-forward networks, and utility functions for autoregressive text generation.
 
 ## install
@@ -23,7 +24,7 @@ Dependencies:
 The fastest way to get started is to train a character-level GPT on the works of Shakespeare. 
 First, we download it as a single (1MB) file and turn it from raw text into one large stream of integers:
 ```sh
-Python data/shakespeare_char/prepare.py
+python data/shakespeare_char/prepare.py
 ```
 
 This creates a `train.bin` and `val.bin` in that data directory. 
@@ -34,7 +35,7 @@ The size of it very much depends on the computational resources of your system:
 **I have a GPU**. We can quickly train a baby GPT with the settings provided in the [config/train_shakespeare_char.py](config/train_shakespeare_char.py) config file:
 
 ```sh
-Python train.py config/train_shakespeare_char.py
+python train.py config/train_shakespeare_char.py
 ```
 
 Inside it, you'll see that we're training a GPT with a context size of up to 256 characters, 384 feature channels, and it is a 6-layer Transformer with 6 heads in each layer. 
@@ -42,7 +43,7 @@ On one A100 GPU this training run takes about 3 minutes and the best validation 
 Based on the configuration, the model checkpoints are being written into the `--out_dir` directory `out-shakespeare-char`. So once the training finishes we can sample from the best model by pointing the sampling script at this directory:
 
 ```sh
-Python sample.py --out_dir=out-shakespeare-char
+python sample.py --out_dir=out-shakespeare-char
 ```
 
 **I only no GPU** (or only regular computer/laptop). 
@@ -51,7 +52,7 @@ Get PyTorch nightly ([select it here](https://pytorch.org/get-started/locally/) 
 But even without it, a simple train run could look as follows:
 
 ```sh
-Python train.py config/train_shakespeare_char.py --device=cpu --compile=False --eval_iters=20 --log_interval=1 --block_size=64 --batch_size=12 --n_layer=4 --n_head=4 --n_embd=128 --max_iters=2000 --lr_decay_iters=2000 --dropout=0.0
+python train.py config/train_shakespeare_char.py --device=cpu --compile=False --eval_iters=20 --log_interval=1 --block_size=64 --batch_size=12 --n_layer=4 --n_head=4 --n_embd=128 --max_iters=2000 --lr_decay_iters=2000 --dropout=0.0
 ```
 
 Here, since we are running on CPU instead of GPU we must set both `--device=cpu` and also turn off PyTorch 2.0 compile with `--compile=False`. 
@@ -61,7 +62,7 @@ Because our network is so small we also ease down on regularization (`--dropout=
 This still runs in about ~3 minutes, but gets a little bit more loss and therefore also worse samples, but it's still good fun:
 
 ```sh
-Python sample.py --out_dir=out-shakespeare-char --device=cpu
+python sample.py --out_dir=out-shakespeare-char --device=cpu
 ```
 
 ## 2. Key Imports
